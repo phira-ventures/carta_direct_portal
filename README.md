@@ -1,19 +1,19 @@
 # Carta Direct Portal
 
-A secure web portal for managing company shareholdings with enterprise-grade security and Carta-inspired design.
+A secure web portal for managing company stockholdings with enterprise-grade security and Carta-inspired design.
 
 ## Features
 
-### For Shareholders
+### For Stockholders
 - 🔐 Secure login for admin-created accounts
-- 📊 Personal dashboard showing share count and ownership percentage  
+- 📊 Personal dashboard showing stock count and ownership percentage
 - 🔒 Privacy protection - users can only see their own data
 - 📱 Responsive design for mobile and desktop
 
 ### For Administrators
-- 👥 Complete shareholder management
-- ✏️ Update individual share counts and notes
-- 🏢 Manage total company shares
+- 👥 Complete stockholder management
+- ✏️ Update individual stock counts and notes
+- 🏢 Manage total company stocks
 - 📈 Real-time allocation tracking and statistics
 - 💾 SQLite database for easy management
 
@@ -78,12 +78,12 @@ On first run, an admin account is automatically created:
 **⚠️ IMPORTANT:** Change the admin password immediately after first login!
 
 ### Sample Test Data (Optional)
-For development/testing, create sample shareholders:
+For development/testing, create sample stockholders:
 ```bash
 python test_data.py
 ```
 
-This creates 5 test shareholders with varying share allocations for demo purposes.
+This creates 5 test stockholders with varying stock allocations for demo purposes.
 
 ## Security Features
 
@@ -111,16 +111,16 @@ This creates 5 test shareholders with varying share allocations for demo purpose
 - `is_admin`: Boolean admin flag
 - `created_at`: Account creation timestamp
 
-### Shares Table
+### Stocks Table
 - `id`: Primary key
 - `user_id`: Foreign key to users table
-- `share_count`: Number of shares owned
+- `stock_count`: Number of stocks owned
 - `last_updated`: Last modification timestamp
-- `notes`: Optional notes about shareholding
+- `notes`: Optional notes about stock ownership
 
 ### Company Info Table
 - `id`: Primary key
-- `total_shares`: Total shares authorized by company
+- `total_stocks`: Total stocks authorized by company
 - `company_name`: Company name
 - `last_updated`: Last modification timestamp
 
@@ -195,7 +195,7 @@ carta_direct_portal/
 └── templates/
     ├── base.html                  # Base template
     ├── login.html                 # Login page
-    ├── dashboard.html             # Shareholder dashboard
+    ├── dashboard.html             # Stockholder dashboard
     ├── admin.html                 # Admin panel
     ├── change_password.html       # Password change form
     ├── create_stockholder.html    # Create stockholder form
