@@ -110,14 +110,14 @@ After logging in as admin, you can create stockholders through the admin dashboa
 - `is_admin`: Boolean admin flag
 - `created_at`: Account creation timestamp
 
-### Stocks Table
+### Stocks Table (`stocks`)
 - `id`: Primary key
 - `user_id`: Foreign key to users table
 - `stock_count`: Number of stocks owned
 - `last_updated`: Last modification timestamp
 - `notes`: Optional notes about stock ownership
 
-### Company Info Table
+### Company Info Table (`company_info`)
 - `id`: Primary key
 - `total_stocks`: Total stocks authorized by company
 - `company_name`: Company name

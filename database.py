@@ -29,10 +29,10 @@ def init_database():
     
     # Stocks table
     cursor.execute('''
-        CREATE TABLE IF NOT EXISTS shares (
+        CREATE TABLE IF NOT EXISTS stocks (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             user_id INTEGER NOT NULL,
-            share_count INTEGER NOT NULL DEFAULT 0,
+            stock_count INTEGER NOT NULL DEFAULT 0,
             last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             notes TEXT,
             FOREIGN KEY (user_id) REFERENCES users (id)
@@ -43,7 +43,7 @@ def init_database():
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS company_info (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            total_shares INTEGER NOT NULL DEFAULT 0,
+            total_stocks INTEGER NOT NULL DEFAULT 0,
             company_name TEXT NOT NULL,
             last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
@@ -116,7 +116,7 @@ def init_database():
         
         # Create stocks record for admin
         cursor.execute('''
-            INSERT INTO shares (user_id, share_count, notes)
+            INSERT INTO stocks (user_id, stock_count, notes)
             VALUES (?, ?, ?)
         ''', (admin_id, 0, 'Administrator account'))
     
@@ -126,7 +126,7 @@ def init_database():
     
     if not company_exists:
         cursor.execute('''
-            INSERT INTO company_info (total_shares, company_name)
+            INSERT INTO company_info (total_stocks, company_name)
             VALUES (?, ?)
         ''', (1000000, Config.COMPANY_NAME))
     
@@ -186,14 +186,14 @@ class User:
         """Get user's stock information."""
         conn = get_db_connection()
         stocks_data = conn.execute(
-            'SELECT share_count, last_updated, notes FROM shares WHERE user_id = ?',
+            'SELECT stock_count, last_updated, notes FROM stocks WHERE user_id = ?',
             (self.id,)
         ).fetchone()
         conn.close()
-        
+
         if stocks_data:
             return {
-                'count': stocks_data['share_count'],
+                'count': stocks_data['stock_count'],
                 'last_updated': stocks_data['last_updated'],
                 'notes': stocks_data['notes']
             }
@@ -211,44 +211,44 @@ class User:
 def get_total_stocks():
     """Get total company stocks."""
     conn = get_db_connection()
-    result = conn.execute('SELECT total_shares FROM company_info LIMIT 1').fetchone()
+    result = conn.execute('SELECT total_stocks FROM company_info LIMIT 1').fetchone()
     conn.close()
-    
-    return result['total_shares'] if result else 0
+
+    return result['total_stocks'] if result else 0
 
 def get_all_stockholders():
     """Get all stockholders with their stock information (admin only)."""
     conn = get_db_connection()
     result = conn.execute('''
-        SELECT u.id, u.name, u.email, s.share_count as stock_count
+        SELECT u.id, u.name, u.email, s.stock_count
         FROM users u
-        LEFT JOIN shares s ON u.id = s.user_id
+        LEFT JOIN stocks s ON u.id = s.user_id
         WHERE u.is_admin = 0
         ORDER BY u.name
     ''').fetchall()
     conn.close()
-    
+
     return result
 
 def update_user_stocks(user_id, stock_count, notes=None):
     """Update a user's stock count."""
     conn = get_db_connection()
-    
+
     # Check if stocks record exists
-    existing = conn.execute('SELECT id FROM shares WHERE user_id = ?', (user_id,)).fetchone()
-    
+    existing = conn.execute('SELECT id FROM stocks WHERE user_id = ?', (user_id,)).fetchone()
+
     if existing:
         conn.execute('''
-            UPDATE shares 
-            SET share_count = ?, notes = ?, last_updated = CURRENT_TIMESTAMP
+            UPDATE stocks
+            SET stock_count = ?, notes = ?, last_updated = CURRENT_TIMESTAMP
             WHERE user_id = ?
         ''', (stock_count, notes, user_id))
     else:
         conn.execute('''
-            INSERT INTO shares (user_id, share_count, notes)
+            INSERT INTO stocks (user_id, stock_count, notes)
             VALUES (?, ?, ?)
         ''', (user_id, stock_count, notes))
-    
+
     conn.commit()
     conn.close()
 
@@ -267,17 +267,17 @@ def update_user_info(user_id, name, email, stock_count):
         ''', (name, email, user_id))
 
         # Update stocks information
-        existing = conn.execute('SELECT id FROM shares WHERE user_id = ?', (user_id,)).fetchone()
+        existing = conn.execute('SELECT id FROM stocks WHERE user_id = ?', (user_id,)).fetchone()
 
         if existing:
             conn.execute('''
-                UPDATE shares
-                SET share_count = ?, last_updated = CURRENT_TIMESTAMP
+                UPDATE stocks
+                SET stock_count = ?, last_updated = CURRENT_TIMESTAMP
                 WHERE user_id = ?
             ''', (stock_count, user_id))
         else:
             conn.execute('''
-                INSERT INTO shares (user_id, share_count)
+                INSERT INTO stocks (user_id, stock_count)
                 VALUES (?, ?)
             ''', (user_id, stock_count))
 
@@ -299,8 +299,8 @@ def update_total_stocks(total_stocks):
     """Update total company stocks."""
     conn = get_db_connection()
     conn.execute('''
-        UPDATE company_info 
-        SET total_shares = ?, last_updated = CURRENT_TIMESTAMP
+        UPDATE company_info
+        SET total_stocks = ?, last_updated = CURRENT_TIMESTAMP
     ''', (total_stocks,))
     conn.commit()
     conn.close()
@@ -317,7 +317,7 @@ def create_user(name, email, password_hash, initial_stocks=0):
         
         # Create stocks record
         conn.execute('''
-            INSERT INTO shares (user_id, share_count)
+            INSERT INTO stocks (user_id, stock_count)
             VALUES (?, ?)
         ''', (user_id, initial_stocks))
         
@@ -355,7 +355,7 @@ def delete_user(user_id):
             return False  # Cannot delete admin users
 
         # Delete stocks first (foreign key)
-        conn.execute('DELETE FROM shares WHERE user_id = ?', (user_id,))
+        conn.execute('DELETE FROM stocks WHERE user_id = ?', (user_id,))
 
         # Delete user
         cursor = conn.execute('DELETE FROM users WHERE id = ? AND is_admin = 0', (user_id,))
