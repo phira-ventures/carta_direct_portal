@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - MYSHEEPI INC{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1 class="h2 font-semibold">{{ current_user.name }}</h1>
+        <p class="text-secondary mb-0">Welcome to your stockholder portal</p>
+    </div>
+    <span class="badge bg-dark fs-6 px-3 py-2">Stockholder</span>
+</div>
+
+<!-- Portfolio Stats -->
+<div class="row g-4 mb-5">
+    <!-- Your Stocks Card -->
+    <div class="col-lg-4 col-md-6">
+        <div class="card stat-card h-100">
+            <div class="card-body">
+                <div class="stat-icon primary mx-auto">
+                    <i class="bi bi-pie-chart-fill"></i>
+                </div>
+                <div class="stat-number">
+                    {{ "{:,}".format(stocks_info.count) }}
+                </div>
+                <div class="stat-label">Your Stocks</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Ownership Percentage Card -->
+    <div class="col-lg-4 col-md-6">
+        <div class="card stat-card h-100">
+            <div class="card-body">
+                <div class="stat-icon success mx-auto">
+                    <i class="bi bi-percent"></i>
+                </div>
+                <div class="stat-number">
+                    {{ "%.2f"|format(ownership_percentage) }}%
+                </div>
+                <div class="stat-label">Ownership</div>
+                <small class="text-muted">of total equity</small>
+            </div>
+        </div>
+    </div>
+
+    <!-- Total Company Stocks Card -->
+    <div class="col-lg-4 col-md-6">
+        <div class="card stat-card h-100">
+            <div class="card-body">
+                <div class="stat-icon info mx-auto">
+                    <i class="bi bi-building"></i>
+                </div>
+                <div class="stat-number">
+                    {{ "{:,}".format(total_stocks) }}
+                </div>
+                <div class="stat-label">Total Stocks</div>
+                <small class="text-muted">company total</small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Stock Details Card -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="bi bi-info-circle me-2"></i>Stock Details
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row g-4">
+                    <div class="col-md-4">
+                        <div class="d-flex flex-column">
+                            <span class="text-sm font-medium text-secondary">Name</span>
+                            <span class="h5 mb-0">{{ current_user.name }}</span>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="d-flex flex-column">
+                            <span class="text-sm font-medium text-secondary">Stock Count</span>
+                            <span class="h5 mb-0">{{ "{:,}".format(stocks_info.count) }}</span>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="d-flex flex-column">
+                            <span class="text-sm font-medium text-secondary">Ownership Percentage</span>
+                            <span class="h5 mb-0">{{ "%.2f"|format(ownership_percentage) }}%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Ownership Visualization -->
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="bi bi-bar-chart me-2"></i>Ownership Visualization
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="position-relative mb-3">
+                    <div class="progress" style="height: 40px;">
+                        <div class="progress-bar bg-dark" 
+                             role="progressbar" 
+                             style="width: {{ ownership_percentage }}%"
+                             aria-valuenow="{{ ownership_percentage }}" 
+                             aria-valuemin="0" 
+                             aria-valuemax="100">
+                        </div>
+                    </div>
+                    <div class="position-absolute top-50 start-0 translate-middle-y ms-3">
+                        <span class="font-semibold" style="color: white; font-weight: 700; text-shadow: 1px 1px 2px rgba(0,0,0,1);">
+                            {{ "%.2f"|format(ownership_percentage) }}%
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="row text-center">
+                    <div class="col-6">
+                        <div class="d-flex flex-column">
+                            <span class="text-xs font-medium text-secondary text-uppercase">Your Ownership</span>
+                            <span class="h6 mb-0">{{ "%.2f"|format(ownership_percentage) }}%</span>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="d-flex flex-column">
+                            <span class="text-xs font-medium text-secondary text-uppercase">Total Equity</span>
+                            <span class="h6 mb-0">100%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

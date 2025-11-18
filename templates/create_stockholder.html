@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+
+{% block title %}Create Stockholder - MYSHEEPI INC{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8 col-xl-6">
+        <!-- Header -->
+        <div class="mb-4">
+            <h1 class="h2 font-semibold">
+                <i class="bi bi-person-plus me-2"></i>Create New Stockholder
+            </h1>
+            <p class="text-secondary">Add a new stockholder to the equity management system</p>
+        </div>
+
+        <!-- Form Card -->
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0 text-white">Stockholder Information</h5>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    {{ form.hidden_tag() }}
+                    
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            {{ form.name.label(class="form-label") }}
+                            {{ form.name(class="form-control" + (" is-invalid" if form.name.errors else "")) }}
+                            {% if form.name.errors %}
+                                <div class="invalid-feedback">
+                                    {% for error in form.name.errors %}{{ error }}{% endfor %}
+                                </div>
+                            {% endif %}
+                            <div class="form-text">Full name for display purposes</div>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            {{ form.email.label(class="form-label") }}
+                            {{ form.email(class="form-control" + (" is-invalid" if form.email.errors else "")) }}
+                            {% if form.email.errors %}
+                                <div class="invalid-feedback">
+                                    {% for error in form.email.errors %}{{ error }}{% endfor %}
+                                </div>
+                            {% endif %}
+                            <div class="form-text">Used for login and notifications</div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            {{ form.password.label(class="form-label") }}
+                            {{ form.password(class="form-control" + (" is-invalid" if form.password.errors else "")) }}
+                            {% if form.password.errors %}
+                                <div class="invalid-feedback">
+                                    {% for error in form.password.errors %}{{ error }}{% endfor %}
+                                </div>
+                            {% endif %}
+                            <div class="form-text">Must be 12+ characters with uppercase, lowercase, number, and special character</div>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            {{ form.stock_count.label(class="form-label") }}
+                            {{ form.stock_count(class="form-control" + (" is-invalid" if form.stock_count.errors else ""), value="0") }}
+                            {% if form.stock_count.errors %}
+                                <div class="invalid-feedback">
+                                    {% for error in form.stock_count.errors %}{{ error }}{% endfor %}
+                                </div>
+                            {% endif %}
+                            <div class="form-text">Initial stock allocation</div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-center mt-4">
+                        <a href="{{ url_for('admin_dashboard') }}" class="btn btn-outline-secondary">
+                            <i class="bi bi-arrow-left me-2"></i>Back to Admin Panel
+                        </a>
+                        {{ form.submit(class="btn btn-primary") }}
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Instructions Card -->
+        <div class="card mt-4">
+            <div class="card-header">
+                <h6 class="mb-0">
+                    <i class="bi bi-info-circle me-2"></i>Instructions
+                </h6>
+            </div>
+            <div class="card-body">
+                <ul class="mb-0 text-sm">
+                    <li class="mb-2">Name should be the stockholder's full name for display purposes</li>
+                    <li class="mb-2">Email must be unique and valid (used for login)</li>
+                    <li class="mb-2">The new stockholder can log in immediately with their email and password</li>
+                    <li class="mb-2">Initial stock count can be set to 0 and updated later</li>
+                    <li class="mb-0">You can manage their stocks from the Admin Panel after creation</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

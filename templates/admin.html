@@ -1,0 +1,368 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Panel - MYSHEEPI INC{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1 class="h2 font-semibold">
+            <i class="bi bi-gear me-2"></i>Admin Panel
+        </h1>
+        <p class="text-secondary mb-0">Manage stockholders and company equity</p>
+    </div>
+    <span class="badge bg-dark fs-6 px-3 py-2">Administrator</span>
+</div>
+
+<!-- Summary Cards -->
+<div class="row g-4 mb-5">
+    <div class="col-lg-3 col-md-6">
+        <div class="card stat-card h-100">
+            <div class="card-body">
+                <div class="stat-icon primary mx-auto">
+                    <i class="bi bi-people-fill"></i>
+                </div>
+                <div class="stat-number">{{ stockholders|length }}</div>
+                <div class="stat-label">Stockholders</div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-3 col-md-6">
+        <div class="card stat-card h-100">
+            <div class="card-body">
+                <div class="stat-icon info mx-auto">
+                    <i class="bi bi-building"></i>
+                </div>
+                <div class="stat-number">{{ "{:,}".format(total_stocks) }}</div>
+                <div class="stat-label">Total Stocks</div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-3 col-md-6">
+        <div class="card stat-card h-100">
+            <div class="card-body">
+                <div class="stat-icon success mx-auto">
+                    <i class="bi bi-check-circle-fill"></i>
+                </div>
+                <div class="stat-number">{{ "{:,}".format(total_allocated) }}</div>
+                <div class="stat-label">Allocated</div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-3 col-md-6">
+        <div class="card stat-card h-100">
+            <div class="card-body">
+                <div class="stat-icon warning mx-auto">
+                    <i class="bi bi-clock-fill"></i>
+                </div>
+                <div class="stat-number">{{ "{:,}".format(unallocated_stocks) }}</div>
+                <div class="stat-label">Unallocated</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Company Settings -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header bg-dark text-white">
+                <h5 class="mb-0 text-white">
+                    Company Settings
+                </h5>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('update_total_stocks_route') }}" class="row g-3">
+                    {{ total_stocks_form.hidden_tag() }}
+                    <div class="col-md-4">
+                        {{ total_stocks_form.total_stocks.label(class="form-label") }}
+                        {{ total_stocks_form.total_stocks(class="form-control", value=total_stocks) }}
+                    </div>
+                    <div class="col-md-8 d-flex align-items-end">
+                        {{ total_stocks_form.submit(class="btn btn-dark") }}
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Stockholders Management -->
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">
+                        <i class="bi bi-people me-2"></i>Stockholder Management
+                    </h5>
+                    <a href="{{ url_for('create_stockholder') }}" class="btn btn-dark">
+                        <i class="bi bi-person-plus me-2"></i>Add New Stockholder
+                    </a>
+                </div>
+            </div>
+            <div class="card-body p-0">
+                {% if stockholders %}
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th class="ps-4 fw-semibold">Name</th>
+                                    <th class="fw-semibold">Email</th>
+                                    <th class="text-end fw-semibold">Stocks</th>
+                                    <th class="text-end fw-semibold" style="white-space: nowrap;">Ownership %</th>
+                                    <th class="text-center fw-semibold">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for stockholder in stockholders %}
+                                <tr>
+                                    <td class="align-middle ps-4">
+                                        <span class="fw-semibold">{{ stockholder.name }}</span>
+                                    </td>
+                                    <td class="align-middle text-muted">{{ stockholder.email }}</td>
+                                    <td class="text-end align-middle">
+                                        <span class="badge bg-dark fs-6 px-2 py-1">{{ "{:,}".format(stockholder.stock_count) }}</span>
+                                    </td>
+                                    <td class="text-end align-middle">
+                                        <span class="badge bg-dark fs-6 px-2 py-1">{{ "%.2f"|format(stockholder.percentage) }}%</span>
+                                    </td>
+                                    <td class="align-middle">
+                                        <div class="dropdown">
+                                            <button class="btn btn-sm btn-outline-dark dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                <i class="bi bi-three-dots-vertical"></i> Actions
+                                            </button>
+                                            <ul class="dropdown-menu">
+                                                <li>
+                                                    <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#editStocksModal{{ stockholder.id }}">
+                                                        <i class="bi bi-pencil me-2"></i>Edit Stockholder
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a class="dropdown-item text-warning" href="#" data-bs-toggle="modal" data-bs-target="#resetPasswordModal{{ stockholder.id }}">
+                                                        <i class="bi bi-key me-2"></i>Reset Password
+                                                    </a>
+                                                </li>
+                                                <li><hr class="dropdown-divider"></li>
+                                                <li>
+                                                    <a class="dropdown-item text-danger" href="#" data-bs-toggle="modal" data-bs-target="#deleteModal{{ stockholder.id }}">
+                                                        <i class="bi bi-trash me-2"></i>Delete Stockholder
+                                                    </a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </td>
+                                </tr>
+                                
+                                <!-- Edit Stocks Modal -->
+                                <div class="modal fade" id="editStocksModal{{ stockholder.id }}" tabindex="-1">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title">Edit Stockholder - {{ stockholder.name }}</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                            </div>
+                                            <form method="POST" action="{{ url_for('update_stocks') }}">
+                                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                                                <div class="modal-body">
+                                                    <input type="hidden" name="user_id" value="{{ stockholder.id }}">
+                                                    
+                                                    <div class="row">
+                                                        <div class="col-md-6 mb-3">
+                                                            <label for="name{{ stockholder.id }}" class="form-label">Name</label>
+                                                            <input type="text" class="form-control" 
+                                                                   name="name" 
+                                                                   id="name{{ stockholder.id }}"
+                                                                   value="{{ stockholder.name }}" 
+                                                                   required>
+                                                        </div>
+                                                        
+                                                        <div class="col-md-6 mb-3">
+                                                            <label for="email{{ stockholder.id }}" class="form-label">Email</label>
+                                                            <input type="email" class="form-control" 
+                                                                   name="email" 
+                                                                   id="email{{ stockholder.id }}"
+                                                                   value="{{ stockholder.email }}" 
+                                                                   required>
+                                                        </div>
+                                                    </div>
+                                                    
+                                                    <div class="mb-3">
+                                                        <label for="stock_count{{ stockholder.id }}" class="form-label">Stock Count</label>
+                                                        <input type="number" class="form-control" 
+                                                               name="stock_count" 
+                                                               id="stock_count{{ stockholder.id }}"
+                                                               value="{{ stockholder.stock_count }}" 
+                                                               min="0" required>
+                                                    </div>
+                                                    
+                                                    <div class="alert alert-info">
+                                                        <small>
+                                                            <strong>Current:</strong> {{ "{:,}".format(stockholder.stock_count) }} stocks ({{ "%.2f"|format(stockholder.percentage) }}%)
+                                                        </small>
+                                                    </div>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                                                    <button type="submit" class="btn btn-dark">Update Stockholder</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Delete Confirmation Modal -->
+                                <div class="modal fade" id="deleteModal{{ stockholder.id }}" tabindex="-1">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title text-danger">
+                                                    <i class="bi bi-exclamation-triangle me-2"></i>Delete Stockholder
+                                                </h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <p class="mb-3">Are you sure you want to delete this stockholder?</p>
+                                                
+                                                <div class="alert alert-warning">
+                                                    <strong>{{ stockholder.name }}</strong><br>
+                                                    <small class="text-muted">{{ stockholder.email }}</small><br>
+                                                    <small>Current stocks: {{ "{:,}".format(stockholder.stock_count) }}</small>
+                                                </div>
+                                                
+                                                <div class="alert alert-danger">
+                                                    <i class="bi bi-exclamation-triangle me-2"></i> 
+                                                    <strong>This action cannot be undone!</strong><br>
+                                                    <small>All stockholder data and stock history will be permanently deleted.</small>
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                                                <form method="POST" action="{{ url_for('delete_stockholder', user_id=stockholder.id) }}" style="display: inline;">
+                                                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                                                    <button type="submit" class="btn btn-danger">
+                                                        <i class="bi bi-trash me-2"></i>Delete Permanently
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Reset Password Modal -->
+                                <div class="modal fade" id="resetPasswordModal{{ stockholder.id }}" tabindex="-1">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title text-warning">
+                                                    <i class="bi bi-key me-2"></i>Reset Password
+                                                </h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                            </div>
+                                            <form method="POST" action="{{ url_for('reset_user_password', user_id=stockholder.id) }}">
+                                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                                                <div class="modal-body">
+                                                    <p class="mb-3">Set a new password for this stockholder:</p>
+
+                                                    <div class="alert alert-info mb-3">
+                                                        <strong>{{ stockholder.name }}</strong><br>
+                                                        <small class="text-muted">{{ stockholder.email }}</small>
+                                                    </div>
+
+                                                    <div class="mb-3">
+                                                        <label for="newPassword{{ stockholder.id }}" class="form-label">New Password</label>
+                                                        <input type="password" class="form-control"
+                                                               name="new_password"
+                                                               id="newPassword{{ stockholder.id }}"
+                                                               placeholder="Enter new password"
+                                                               minlength="12"
+                                                               required>
+                                                        <div class="form-text">Must be 12+ characters with uppercase, lowercase, number, and special character</div>
+                                                    </div>
+
+                                                    <div class="mb-3">
+                                                        <label for="confirmPassword{{ stockholder.id }}" class="form-label">Confirm Password</label>
+                                                        <input type="password" class="form-control"
+                                                               name="confirm_password"
+                                                               id="confirmPassword{{ stockholder.id }}"
+                                                               placeholder="Confirm new password"
+                                                               minlength="12"
+                                                               required>
+                                                    </div>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                                                    <button type="submit" class="btn btn-warning">
+                                                        <i class="bi bi-key me-2"></i>Reset Password
+                                                    </button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="text-center py-5">
+                        <i class="bi bi-people text-muted" style="font-size: 4rem; opacity: 0.3;"></i>
+                        <h4 class="text-muted mt-3">No Stockholders Yet</h4>
+                        <p class="text-muted mb-4">Stockholders will appear here once you create them.</p>
+                        <a href="{{ url_for('create_stockholder') }}" class="btn btn-primary">
+                            <i class="bi bi-person-plus me-2"></i>Add First Stockholder
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Allocation Overview -->
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="bi bi-bar-chart me-2"></i>Allocation Overview
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="progress mb-4" style="height: 30px; position: relative;">
+                    {% set allocation_percentage = (total_allocated / total_stocks * 100) if total_stocks > 0 else 0 %}
+                    <div class="progress-bar bg-dark" role="progressbar" style="width: {{ allocation_percentage }}%;">
+                    </div>
+                    <div style="position: absolute; top: 50%; left: 12px; transform: translateY(-50%); z-index: 10;">
+                        <span style="color: white; font-weight: 600; text-shadow: 1px 1px 2px rgba(0,0,0,0.9); font-size: 14px;">{{ "%.2f"|format(allocation_percentage) }}% Allocated</span>
+                    </div>
+                </div>
+                
+                <div class="row text-center">
+                    <div class="col-md-4">
+                        <div class="d-flex flex-column">
+                            <span class="text-xs font-medium text-secondary text-uppercase">Total Stocks</span>
+                            <span class="h5 mb-0">{{ "{:,}".format(total_stocks) }}</span>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="d-flex flex-column">
+                            <span class="text-xs font-medium text-secondary text-uppercase">Allocated</span>
+                            <span class="h5 mb-0 text-success">{{ "{:,}".format(total_allocated) }}</span>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="d-flex flex-column">
+                            <span class="text-xs font-medium text-secondary text-uppercase">Available</span>
+                            <span class="h5 mb-0 text-warning">{{ "{:,}".format(unallocated_stocks) }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
