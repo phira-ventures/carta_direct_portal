@@ -182,33 +182,30 @@ carta_direct_portal/
 ├── .env                            # Environment variables (DO NOT COMMIT)
 ├── .gitignore                      # Git ignore rules
 ├── README.md                       # This file
+├── LICENSE                         # Proprietary license
 ├── test_data.py                    # Sample data creation script
 ├── deploy.sh                       # Deployment script
 ├── static/
-│   ├── css/style.css              # Custom CSS styling
+│   ├── css/
+│   │   └── style.css              # Custom CSS styling
 │   └── js/
 │       ├── main.js                # Frontend JavaScript
 │       ├── modal-fix.js           # Modal fixes
 │       └── simple-modal.js        # Simple modal handler
-├── templates/
-│   ├── base.html                  # Base template
-│   ├── login.html                 # Login page
-│   ├── dashboard.html             # Shareholder dashboard
-│   ├── admin.html                 # Admin panel
-│   ├── change_password.html       # Password change form
-│   ├── create_stockholder.html    # Create stockholder form
-│   ├── 403.html                   # Forbidden error page
-│   ├── 404.html                   # Not found error page
-│   └── 500.html                   # Server error page
-├── instance/                       # Auto-generated (gitignored)
-│   └── database.db                # SQLite database file
-└── tests/
-    ├── test_unit.py               # Unit tests
-    ├── test_integration.py        # Integration tests
-    ├── test_security.py           # Security tests
-    ├── test_system.py             # System tests
-    └── test_production_readiness.py  # Production readiness tests
+└── templates/
+    ├── base.html                  # Base template
+    ├── login.html                 # Login page
+    ├── dashboard.html             # Shareholder dashboard
+    ├── admin.html                 # Admin panel
+    ├── change_password.html       # Password change form
+    ├── create_stockholder.html    # Create stockholder form
+    ├── 403.html                   # Forbidden error page
+    ├── 404.html                   # Not found error page
+    └── 500.html                   # Server error page
 ```
+
+**Note:** The `instance/` directory is auto-generated when you first run the application and contains the SQLite database. It is excluded from git via `.gitignore`.
+
 
 ## License
 
