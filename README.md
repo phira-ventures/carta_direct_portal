@@ -77,13 +77,12 @@ On first run, an admin account is automatically created:
 
 **⚠️ IMPORTANT:** Change the admin password immediately after first login!
 
-### Sample Test Data (Optional)
-For development/testing, create sample stockholders:
-```bash
-python test_data.py
-```
-
-This creates 5 test stockholders with varying stock allocations for demo purposes.
+### Creating Stockholders
+After logging in as admin, you can create stockholders through the admin dashboard:
+1. Navigate to the Admin Panel
+2. Click "Add New Stockholder"
+3. Fill in the stockholder details (name, email, password, initial stock count)
+4. Click "Create Stockholder"
 
 ## Security Features
 
@@ -176,15 +175,14 @@ carta_direct_portal/
 ├── config.py                       # Configuration settings
 ├── database.py                     # Database models and utilities
 ├── forms.py                        # WTForms form definitions
-├── wsgi.py                         # WSGI entry point
+├── wsgi.py                         # WSGI entry point for production
 ├── requirements.txt                # Python dependencies
+├── deploy.sh                       # Deployment script
 ├── .env.example                    # Environment variables template
 ├── .env                            # Environment variables (DO NOT COMMIT)
 ├── .gitignore                      # Git ignore rules
-├── README.md                       # This file
 ├── LICENSE                         # Proprietary license
-├── test_data.py                    # Sample data creation script
-├── deploy.sh                       # Deployment script
+├── README.md                       # Documentation
 ├── static/
 │   ├── css/
 │   │   └── style.css              # Custom CSS styling
@@ -204,7 +202,7 @@ carta_direct_portal/
     └── 500.html                   # Server error page
 ```
 
-**Note:** The `instance/` directory is auto-generated when you first run the application and contains the SQLite database. It is excluded from git via `.gitignore`.
+**Note:** The `instance/` directory containing the SQLite database (`database.db`) is auto-generated on first run and excluded from git.
 
 
 ## License
