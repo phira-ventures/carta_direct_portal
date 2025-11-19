@@ -516,6 +516,29 @@ def startup_cleanup():
         app.logger.error(f"Error during startup cleanup: {e}")
 
 
+@app.route("/admin/export_database")
+@login_required
+def export_database():
+    """Export database file (admin only, temporary endpoint)."""
+    if not current_user.is_admin:
+        flash("Access denied. Admin privileges required.", "error")
+        return redirect(url_for("dashboard"))
+
+    from flask import send_file
+    import os
+
+    db_path = Config.DATABASE_PATH
+    if os.path.exists(db_path):
+        return send_file(
+            db_path,
+            as_attachment=True,
+            download_name=f"database_export.db",
+        )
+    else:
+        flash("Database file not found.", "error")
+        return redirect(url_for("admin_dashboard"))
+
+
 # Perform cleanup on startup
 with app.app_context():
     startup_cleanup()
