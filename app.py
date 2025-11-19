@@ -56,7 +56,7 @@ def hash_for_logging(sensitive_value):
     return hash_object.hexdigest()[:8]
 
 
-def rate_limit(max_attempts=5, window_minutes=15):
+def rate_limit(max_attempts=99, window_minutes=5):
     """Rate limiting decorator for login attempts using database."""
 
     def decorator(f):
@@ -282,7 +282,6 @@ def admin_dashboard():
 
 @app.route("/admin/update_stocks", methods=["POST"])
 @login_required
-@rate_limit(max_attempts=50, window_minutes=1)
 def update_stocks():
     if not current_user.is_admin:
         flash("Access denied. Admin privileges required.", "error")
@@ -327,7 +326,6 @@ def update_stocks():
 
 @app.route("/admin/update_total_stocks", methods=["POST"])
 @login_required
-@rate_limit(max_attempts=3, window_minutes=5)
 def update_total_stocks_route():
     if not current_user.is_admin:
         flash("Access denied. Admin privileges required.", "error")
@@ -348,7 +346,6 @@ def update_total_stocks_route():
 
 @app.route("/admin/create_stockholder", methods=["GET", "POST"])
 @login_required
-@rate_limit(max_attempts=10, window_minutes=5)
 def create_stockholder():
     if not current_user.is_admin:
         flash("Access denied. Admin privileges required.", "error")
@@ -388,7 +385,6 @@ def create_stockholder():
 
 @app.route("/admin/delete_stockholder/<int:user_id>", methods=["POST"])
 @login_required
-@rate_limit(max_attempts=5, window_minutes=1)
 def delete_stockholder(user_id):
     if not current_user.is_admin:
         flash("Access denied. Admin privileges required.", "error")
@@ -440,7 +436,6 @@ def change_password():
 
 @app.route("/admin/reset_password/<int:user_id>", methods=["POST"])
 @login_required
-@rate_limit(max_attempts=10, window_minutes=5)
 def reset_user_password(user_id):
     """Admin endpoint to reset a user's password."""
     if not current_user.is_admin:
