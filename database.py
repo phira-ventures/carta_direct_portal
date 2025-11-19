@@ -135,7 +135,7 @@ def init_database():
             INSERT INTO users (username, email, password_hash, is_admin)
             VALUES (?, ?, ?, ?)
         """,
-            ("admin", "admin@company.com", admin_password_hash, True),
+            ("admin", "admin", admin_password_hash, True),
         )
 
         admin_id = cursor.lastrowid
