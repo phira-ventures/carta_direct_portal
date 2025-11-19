@@ -516,6 +516,22 @@ def startup_cleanup():
         app.logger.error(f"Error during startup cleanup: {e}")
 
 
+@app.context_processor
+def inject_company_info():
+    """Make company info available to all templates."""
+    from database import get_db_connection
+
+    conn = get_db_connection()
+    company = conn.execute(
+        "SELECT company_name, total_stocks FROM company_info LIMIT 1"
+    ).fetchone()
+    conn.close()
+    return {
+        "company_name": company["company_name"] if company else "Your Company",
+        "company_total_stocks": company["total_stocks"] if company else 0,
+    }
+
+
 @app.route("/admin/export_database")
 @login_required
 def export_database():

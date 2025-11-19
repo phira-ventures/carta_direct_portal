@@ -159,7 +159,7 @@ def init_database():
             INSERT INTO company_info (total_stocks, company_name)
             VALUES (?, ?)
         """,
-            (1000000, Config.COMPANY_NAME),
+            (10000000, Config.COMPANY_NAME),
         )
 
     conn.commit()
