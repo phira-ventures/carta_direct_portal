@@ -132,10 +132,10 @@ def init_database():
         admin_password_hash = generate_password_hash(admin_password)
         cursor.execute(
             """
-            INSERT INTO users (username, email, password_hash, is_admin)
+            INSERT INTO users (username, name, email, password_hash, is_admin)
             VALUES (?, ?, ?, ?)
         """,
-            ("admin", "admin", admin_password_hash, True),
+            ("admin", "Administrator", "admin", admin_password_hash, True),
         )
 
         admin_id = cursor.lastrowid
