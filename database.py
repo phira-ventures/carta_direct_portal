@@ -133,7 +133,7 @@ def init_database():
         cursor.execute(
             """
             INSERT INTO users (username, name, email, password_hash, is_admin)
-            VALUES (?, ?, ?, ?)
+            VALUES (?, ?, ?, ?, ?)
         """,
             ("admin", "Administrator", "admin", admin_password_hash, True),
         )
